@@ -1,0 +1,103 @@
+<div class="col-lg-5 panel panel-info character-list">
+    <div class="panel-body">
+        <div class="house-list">
+            <!-- Here comes the list of houses. -->
+            <a *ngFor="let house of (houses | async)" 
+                [class.active]="house === selectedHouse" (click)="getSelectedHouseDetail(house)">
+                  <h6 class="text-info" *ngIf="house.name !== '' ">{{house.name}}</h6>
+            </a>            
+        </div>
+        <div class="paging">
+            <button class="col-xs-4 btn btn-info" 
+                    [disabled]="currentPage <= 1" 
+                    (click)="currentPage=currentPage-1;getHouses()">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+            </button>
+            <div class="col-xs-4 page-numbers">
+                {{currentPage}}
+            </div>
+            <button class="col-xs-4 btn btn-info"
+                    [disabled]="currentPage >= maxPages - 1" 
+                    (click)="currentPage=currentPage+1;getHouses()">
+                <i class="glyphicon glyphicon-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-lg-7 panel panel-warning" *ngIf="selectedHouse" >
+    <!-- Here comes the selected house's detail -->
+    <h3 class="alert alert-warning">Details about the house</h3>
+
+    <h5 class="alert alert-info" *ngIf="selectedHouse.name !== '' "><b>Name</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.name !== '' ">{{selectedHouse.name}} </h5>
+
+    <h5 class="alert alert-info" *ngIf="selectedHouse.region !== '' "><b>Region</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.region !== '' ">{{selectedHouse.region}} </h5>
+    
+    <h5 class="alert alert-info" *ngIf="selectedHouse.coatOfArms!== '' "><b>Coat of arms</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.coatOfArms !== '' ">{{selectedHouse.coatOfArms}} </h5>
+    
+    <h5 class="alert alert-info" *ngIf="selectedHouse.words !== '' "><b>Words</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.words !== '' ">{{selectedHouse.words}} </h5>
+
+    <!-- Title(s) of the house -->
+    <h5 class="alert alert-info" *ngIf="selectedHouse.titles[0] !== '' && selectedHouse.titles?.length === 1"><b>Title</b></h5>
+    <h5 class="alert alert-info" *ngIf="selectedHouse.titles?.length > 1"><b>Titles</b></h5>
+    <ul class="list-group" *ngFor="let title of selectedHouse.titles">
+        <li class="list-group-item" *ngIf="title !== '' ">{{title}}</li>
+    </ul>
+
+    <!-- Seat(s) of the house -->
+    <h5 class="alert alert-info" *ngIf="selectedHouse.seats[0] !== '' && selectedHouse.seats?.length === 1"><b>Seat</b></h5>
+    <h5 class="alert alert-info" *ngIf="selectedHouse.seats?.length > 1"><b>Seats</b></h5>
+    <ul class="list-group" *ngFor="let seat of selectedHouse.seats">
+        <li class="list-group-item" *ngIf="seat !== '' ">{{seat}}</li>
+    </ul>
+
+    
+    <h5 class="alert alert-info" *ngIf="currentLord !== '' && currentLord !== null "><b>Current lord</b></h5>
+    <a *ngIf="currentLord !== '' && currentLord !== null " [routerLink]="['/characters/', getIdFromUrl(currentLord.url)]" class="list-group-item" >{{getNameOrAlias(currentLord)}} </a>
+
+    <h5 class="alert alert-info" *ngIf="heir !== '' && heir !== null "><b>Heir</b></h5>
+    <a *ngIf="heir !== '' && heir !== null " [routerLink]="['/characters/', getIdFromUrl(heir.url)]" class="list-group-item" >{{heir.name}} </a>
+    
+    <h5 class="alert alert-info" *ngIf="overlord !== '' && overlord !== null "><b>Overlord</b></h5>
+    <a *ngIf="overlord !== '' && overlord !== null " [routerLink]="['/characters/', getIdFromUrl(overlord.url)]" class="list-group-item" >{{getNameOrAlias(overlord)}} </a>
+    
+    <h5 class="alert alert-info" *ngIf="selectedHouse.founded !== '' "><b>Founded</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.founded !== '' ">{{selectedHouse.founded}} </h5>
+    
+    <h5 class="alert alert-info" *ngIf="founder !== '' && founder !== null "><b>Founder</b></h5>
+    <a *ngIf="founder !== '' && founder !== null " [routerLink]="['/characters/', getIdFromUrl(founder.url)]" class="list-group-item" >{{getNameOrAlias(founder)}} </a>
+    
+    <h5 class="alert alert-info" *ngIf="selectedHouse.diedOut !== '' "><b>Died out</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedHouse.diedOut !== '' ">{{selectedHouse.diedOut}} </h5>
+    
+    <!-- Ancestral weapon(s) of the house  -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.ancestralWeapons[0] !== '' && selectedHouse.ancestralWeapons?.length === 1"><b>Ancestral Weapon</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.ancestralWeapons?.length > 1"><b>Ancestral Weapons</b></h5>
+        <ul class="list-group" *ngFor="let weapon of selectedHouse.ancestralWeapons">
+            <li class="list-group-item" *ngIf="weapon !== '' ">{{weapon}}</li>
+        </ul>
+    </div>
+
+    <!-- Cadet branch(es) of the house -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.cadetBranches[0] !== '' && selectedHouse.cadetBranches?.length === 1"><b>Cadet branch</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.cadetBranches?.length > 1"><b>Cadet branches</b></h5>
+        <div class="list-group" *ngFor="let branch of cadetBranches">
+            <a [routerLink]="['/houses/', getIdFromUrl(branch.url)]" class="list-group-item" *ngIf="branch !== '' ">{{branch.name}}</a>
+        </div>
+    </div>
+
+    <!-- Sworn member(s) -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.swornMembers[0] !== '' && selectedHouse.swornMembers?.length === 1"><b>Sworn member</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedHouse.swornMembers?.length > 1"><b>Sworn members</b></h5>
+        <div class="list-group" *ngFor="let member of swornMembers">
+            <a [routerLink]="['/characters/', getIdFromUrl(member.url)]" class="list-group-item" *ngIf="member !== '' ">{{getNameOrAlias(member)}}</a>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,38 @@
+﻿a {
+    cursor: pointer;
+}
+
+.books-list a {
+    display: block;
+    padding: 5px 8px;
+    border: 1px solid lightblue;
+    background: #EEEEFF;
+}
+.books-list a.active h6 {
+    font-weight: bold;
+    color: #00AA00;
+}
+.books-list a h6 {
+    font-size: 1.1em;
+}
+
+.character-list a {
+    display: block;
+    padding: 5px 8px;
+    border: 1px solid lightblue;
+    background: #EEEEFF;
+}
+.character-list a.active h6 {
+    font-weight: bold;
+    color: #00AA00;
+}
+.character-list a h6 {
+    font-size: 1.1em;
+}
+button[disabled='disabled'] {
+    color: darkgrey !important;
+}
+.paging .page-numbers {
+    text-align: center;
+    line-height: 45px;
+}

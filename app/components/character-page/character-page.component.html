@@ -1,0 +1,112 @@
+<div class="col-lg-5 panel panel-info character-list">
+    <div class="panel-body">
+        <div class="character-list">
+            <!-- Here comes the list of characters. -->
+            <a *ngFor="let character of (characters | async)" 
+                [class.active]="character === selectedCharacter" (click)="getSelectedCharacterInformation(character)">
+                <h6 class="text-info">{{getNameOrAlias(character)}}</h6>
+            </a>            
+        </div>
+        <div class="paging">
+            <button class="col-xs-4 btn btn-info" 
+                    [disabled]="currentPage <= 1" 
+                    (click)="currentPage=currentPage-1;getCharacters()">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+            </button>
+            <div class="col-xs-4 page-numbers">
+                {{currentPage}}
+            </div>
+            <button class="col-xs-4 btn btn-info"
+                    [disabled]="currentPage >= maxPages - 1" 
+                    (click)="currentPage=currentPage+1;getCharacters()">
+                <i class="glyphicon glyphicon-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-lg-7 panel panel-warning" *ngIf="selectedCharacter" >
+    <!-- Here comes the selected character's details. -->
+    <h3 class="alert alert-warning">Details about the character</h3>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.name !== '' "><b>Name</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedCharacter.name !== '' ">{{selectedCharacter.name}} </h5>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.culture !== '' "><b>Culture</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedCharacter.culture !== '' ">{{selectedCharacter.culture}}</h5>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.born !== '' "><b>Born</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedCharacter.born !== '' ">{{selectedCharacter.born}} </h5>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.died !== '' "><b>Died</b></h5>
+    <h5 class="list-group-item" *ngIf="selectedCharacter.died !== '' ">{{selectedCharacter.died}} </h5>
+
+    <!-- Title(s) of the character -->
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.titles[0] !== '' && selectedCharacter.titles?.length === 1"><b>Title</b></h5>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.titles?.length > 1"><b>Titles</b></h5>
+    <ul class="list-group" *ngFor="let title of selectedCharacter.titles">
+        <li class="list-group-item" *ngIf="title !== '' ">{{title}}</li>
+    </ul>
+
+    <!-- Alias(es) of the character -->
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.aliases[0] !== '' && selectedCharacter.aliases?.length === 1"><b>Alias</b></h5>
+    <h5 class="alert alert-info" *ngIf="selectedCharacter.aliases?.length > 1"><b>Aliases</b></h5>
+    <ul class="list-group" *ngFor="let alias of selectedCharacter.aliases">
+        <li class="list-group-item" *ngIf="alias !== '' ">{{alias}}</li>
+    </ul>
+    
+
+    <!-- The familiy of the character -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="(father !== '' && father !== null) 
+                || (mother !== '' && mother !== null) 
+                || (spouse !== '' && spouse !== null) ">
+                <b>Family</b></h5>
+        <div class="list-group">
+            <a class="list-group-item" *ngIf="father !== '' && father !== null" [routerLink]="['/characters/', getIdFromUrl(father.url)]">Father: {{getNameOrAlias(father)}}</a>
+            <a class="list-group-item" *ngIf="mother !== '' && mother !== null" [routerLink]="['/characters/', getIdFromUrl(mother.url)]">Mother: {{getNameOrAlias(mother)}}</a>
+            <a class="list-group-item" *ngIf="spouse !== '' && spouse !== null" [routerLink]="['/characters/', getIdFromUrl(spouse.url)]">Spouse: {{getNameOrAlias(spouse)}}</a>
+        </div>
+    </div>
+    
+    <!-- Allegiance(s) of the character  -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.allegiances[0] !== '' && selectedCharacter.allegiances?.length === 1"><b>Allegiance</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.allegiances?.length > 1"><b>Allegiances</b></h5>
+        <div class="list-group" *ngFor="let allegiance of allegiances">
+            <a *ngIf="allegiance !== '' && allegiance !== null " [routerLink]="['/houses/', getIdFromUrl(allegiance.url)]" class = "list-group-item" >{{allegiance.name}}</a>
+        </div>
+    </div>
+
+    <!-- Book(s) that the character played in -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.books[0] !== '' && selectedCharacter.books?.length === 1"><b>Book</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.books?.length > 1"><b>Books</b></h5>
+        <div *ngFor="let book of books">
+            <div class="list-group">
+                <a [routerLink]="['/books/', getIdFromUrl(book.url)]" class="list-group-item" *ngIf="book !== '' ">{{book.name}}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related POV book(s) -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.povBooks[0] !== '' && selectedCharacter.povBooks?.length === 1"><b>POV Book</b></h5>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.povBooks?.length > 1"><b>POV Books</b></h5>
+        <div class="list-group" *ngFor="let pbook of povBooks">
+            <a [routerLink]="['/books/', getIdFromUrl(pbook.url)]" class="list-group-item" *ngIf="pbook !== '' ">{{pbook.name}}</a>
+        </div>
+    </div>
+
+    <!-- Related seasons of TV series -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.tvSeries[0] !== '' && selectedCharacter.tvSeries?.length > 0"><b>Series</b></h5>
+        <ul class ="list-group" *ngFor="let series of selectedCharacter.tvSeries">
+            <li class ="list-group-item" *ngIf="series !== '' ">{{series}}</li>
+        </ul>
+    </div>
+
+    <!-- The person that played the character -->
+    <div>
+        <h5 class="alert alert-info" *ngIf="selectedCharacter.playedBy[0] !== '' && selectedCharacter.playedBy?.length > 0"><b>Playedby</b></h5>
+        <ul class ="list-group" *ngFor="let played of selectedCharacter.playedBy">
+            <li class = "list-group-item" *ngIf="played !== '' ">{{played}}</li>
+        </ul>
+    </div>
+
+</div>
